@@ -28,6 +28,10 @@ import TextField from '@mui/material/TextField';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -185,17 +189,18 @@ const EnhancedTableToolbar = (props) => {
     const [envie, setEnvie] = React.useState('');
     const [precision, setPrecision] = React.useState('');
     const [couleur, setCouleur] = React.useState('');
-    const [nomC, setNomC] = React.useState('');
-    const [mailC, setMailC] = React.useState('');
-    const [phoneC, setPhoneC] = React.useState('');
-    const [lieuC, setLieuC] = React.useState('');
+    const [clientSelected, setClientSelected] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [open2, setOpen2] = React.useState(false);
     const [sel, setSel] = React.useState(selected[0]);
+    const [rowsClients, setRowsClients] = React.useState([{ pk: "test1", sk: "test1" }]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const handleOpen2 = () => setOpen(true);
-    const handleClose2 = () => setOpen(false);
+    const handleOpen2 = () => {
+        setOpen2(true);
+        fetchClients()
+    };
+    const handleClose2 = () => setOpen2(false);
 
     const style = {
         position: 'absolute',
@@ -317,23 +322,51 @@ const EnhancedTableToolbar = (props) => {
         if (event.target.name == 'couleur') {
             setCouleur(event.target.value);
         }
-        if (event.target.name == 'nomC') {
-            setNomC(event.target.value);
-        }
-        if (event.target.name == 'mailC') {
-            setMailC(event.target.value);
-        }
-        if (event.target.name == 'phoneC') {
-            setPhoneC(event.target.value);
-        }
-        if (event.target.name == 'lieuC') {
-            setLieuC(event.target.value);
-        }
     }
+
+    const fetchClients = async () => {
+        const clients = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
+            {
+                "operation": "list",
+                "tableName": "clients",
+                "payload": {
+                    "Item": {
+                        "pk": "1234ABCD",
+                        "sk": "1234ABCD"
+                    }
+                }
+            })
+
+        setRowsClients(clients.data.Items)
+    }
+
+
 
     const makeAPack = async () => {
+        console.log(selected)
+        await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
+            {
+                "operation": "create",
+                "tableName": "paque",
+                "payload": {
+                    "Item": {
+                        'pk': 'paque#' + Math.floor(Math.random() * 1000) + '-' + Math.floor(Math.random() * 1000),
+                        'sk': 'sellman#1',
+                        'nom': nom,
+                        'prix': prix,
+                        'client': clientSelected,
+                        'leadsListe': selected
+                    }
+                }
+            })
 
+        //refetchLeads()
+        setOpen2(false)
     }
+    const handleChangeSelect = (event) => {
+        setClientSelected(event.target.value);
+    };
+
 
     return (
         <Toolbar
@@ -380,11 +413,48 @@ const EnhancedTableToolbar = (props) => {
                 </Tooltip>
             )}
 
-            <Tooltip title="paque">
+            <Tooltip title="Make a paque">
                 <IconButton>
-                    <CardGiftcardIcon onClick={makeAPack} />
+                    <CardGiftcardIcon onClick={handleOpen2} />
                 </IconButton>
             </Tooltip>
+            <div>
+                <Modal
+                    open={open2}
+                    onClose={handleClose2}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Cree un paque
+                        </Typography>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <TextField id="standard-basic" size='small' label="Nom" variant="outlined" name="nom" onChange={onInputchange} /><br />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField id="standard-basic" size='small' label="Prix" variant="outlined" name="prix" onChange={onInputchange} /><br /><br />
+                            </Grid>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={clientSelected}
+                                    label="Client"
+                                    onChange={handleChangeSelect}
+                                >
+                                    {rowsClients.map(function (object, i) {
+                                        return <MenuItem value={object}>{object.nom}</MenuItem>;
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Button variant="contained" onClick={makeAPack}>Save</Button>
+                    </Box>
+                </Modal>
+            </div>
 
 
             {numSelected == 1 ? (
