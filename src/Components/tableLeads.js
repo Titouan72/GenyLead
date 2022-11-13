@@ -331,6 +331,10 @@ const EnhancedTableToolbar = (props) => {
         }
     }
 
+    const makeAPack = async () => {
+
+    }
+
     return (
         <Toolbar
             sx={{
@@ -378,7 +382,7 @@ const EnhancedTableToolbar = (props) => {
 
             <Tooltip title="paque">
                 <IconButton>
-                    <CardGiftcardIcon onClick={deleteLeads} />
+                    <CardGiftcardIcon onClick={makeAPack} />
                 </IconButton>
             </Tooltip>
 
