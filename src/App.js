@@ -129,6 +129,36 @@ export default function App() {
       setLieuC(event.target.value);
     }
   }
+  const refetchLeads = async () => {
+    const leads = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
+    {
+      "operation": "list",
+      "tableName": "leads",
+      "payload": {
+        "Item": {
+          "pk": "1234ABCD",
+          "sk": "1234ABCD"
+        }
+      }
+    })
+    setRows(leads.data.Items)
+  }
+
+  const refetchClients = async () => {
+    const clients = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
+    {
+      "operation": "list",
+      "tableName": "clients",
+      "payload": {
+        "Item": {
+          "pk": "1234ABCD",
+          "sk": "1234ABCD"
+        }
+      }
+    })
+    
+    setRowsClients(clients.data.Items)
+  }
 
   const saveLeads = async () => {
     await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
@@ -151,6 +181,9 @@ export default function App() {
         }
       }
     })
+
+    refetchLeads()
+    setOpen(false)
   }
   const saveClients = async () => {
     await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
@@ -168,6 +201,8 @@ export default function App() {
         }
       }
     })
+    refetchClients()
+    setOpen2(false)
   }
   console.log('erwerwerwerr', rows)
   console.log('erwerwerwerr', rowsClients)
@@ -216,7 +251,7 @@ export default function App() {
           <Button variant="contained" onClick={saveLeads}>Save</Button>
         </Box>
       </Modal>
-      <TableComponentsLeads rows={rows} />
+      <TableComponentsLeads rows={rows} refetch={refetchLeads}/>
       <Button onClick={handleOpen2} style={{ marginTop: '20px', color: 'black' }}>Insert a client</Button>
       <Modal
         open={open2}
@@ -236,7 +271,7 @@ export default function App() {
           <Button variant="contained" onClick={saveClients}>Save</Button>
         </Box>
       </Modal>
-      <TableComponentsClients rows={rowsClients} />
+      <TableComponentsClients rows={rowsClients} refetch={refetchClients}/>
     </div>
   );
 }

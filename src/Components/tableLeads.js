@@ -27,6 +27,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -189,10 +190,12 @@ const EnhancedTableToolbar = (props) => {
     const [phoneC, setPhoneC] = React.useState('');
     const [lieuC, setLieuC] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    const [open2, setOpen2] = React.useState(false);
     const [sel, setSel] = React.useState(selected[0]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
+    const handleOpen2 = () => setOpen(true);
+    const handleClose2 = () => setOpen(false);
 
     const style = {
         position: 'absolute',
@@ -241,7 +244,7 @@ const EnhancedTableToolbar = (props) => {
                         },
                         "AttributeUpdates": {
                             "mail": {
-                                "Value": mail
+                                "Value": mail != '' ? mail : element.mail
                             },
                             "phone": {
                                 "Value": phone
@@ -270,6 +273,17 @@ const EnhancedTableToolbar = (props) => {
                         }
                     }
                 })
+            props.refetch()
+            setOpen(false)
+            setNom('')
+            setPrenom('')
+            setCouleur('')
+            setEnvie('')
+            setPrecision('')
+            setMail('')
+            setPhone('')
+            setLieu('')
+            setPrix('')
         }
 
     }
@@ -362,12 +376,20 @@ const EnhancedTableToolbar = (props) => {
                 </Tooltip>
             )}
 
+            <Tooltip title="paque">
+                <IconButton>
+                    <CardGiftcardIcon onClick={deleteLeads} />
+                </IconButton>
+            </Tooltip>
+
+
             {numSelected == 1 ? (
-                <><Tooltip title="Delete">
-                    <IconButton>
-                        <AutoFixHighIcon onClick={handleOpen} />
-                    </IconButton>
-                </Tooltip>
+                <>
+                    <Tooltip title="Delete">
+                        <IconButton>
+                            <AutoFixHighIcon onClick={handleOpen} />
+                        </IconButton>
+                    </Tooltip>
                     <div>
                         <Modal
                             open={open}
@@ -492,7 +514,7 @@ export default function EnhancedTable(props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} refetch={props.refetch} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}

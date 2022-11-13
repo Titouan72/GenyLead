@@ -22,6 +22,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -139,7 +144,27 @@ EnhancedTableHead.propTypes = {
 const EnhancedTableToolbar = (props) => {
     const { numSelected } = props;
     const { selected } = props;
-    console.log('delete', props)
+    const [val, setVal] = React.useState(props.selected[0]);
+    const [nom, setNom] = React.useState();
+    const [mail, setMail] = React.useState('');
+    const [phone, setPhone] = React.useState('');
+    const [lieu, setLieu] = React.useState('');
+    const [open, setOpen] = React.useState(false);
+    const [sel, setSel] = React.useState(selected[0]);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 24,
+        p: 4,
+    };
     const deleteClients = async () => {
         for (let i = 0; i < selected.length; i++) {
             console.log('delete', selected)
@@ -159,7 +184,60 @@ const EnhancedTableToolbar = (props) => {
                 })
         }
 
+
     }
+
+    const updateClients = async () => {
+        for (let i = 0; i < selected.length; i++) {
+            console.log('update', selected)
+            const element = selected[i];
+            await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
+                {
+                    "operation": "update",
+                    "tableName": "clients",
+                    "payload": {
+                        "Key": {
+                            "pk": element.pk,
+                            "sk": element.sk
+                        },
+                        "AttributeUpdates": {
+                            "mail": {
+                                "Value": mail
+                            },
+                            "phone": {
+                                "Value": phone
+                            },
+                            "lieu": {
+                                "Value": lieu
+                            },
+                            "nom": {
+                                "Value": nom
+                            }
+                        }
+                    }
+                })
+                props.refetch()
+                setOpen(false)
+        }
+    }
+
+    const onInputchange = (event) => {
+        console.log(event.target.name)
+        if (event.target.name == 'nom') {
+            console.log('code', event.target.value)
+            setNom(event.target.value);
+        }
+        if (event.target.name == 'mail') {
+            setMail(event.target.value);
+        }
+        if (event.target.name == 'phone') {
+            setPhone(event.target.value);
+        }
+        if (event.target.name == 'lieu') {
+            setLieu(event.target.value);
+        }
+    }
+
 
     return (
         <Toolbar
@@ -197,6 +275,48 @@ const EnhancedTableToolbar = (props) => {
                         <DeleteIcon onClick={deleteClients} />
                     </IconButton>
                 </Tooltip>
+            ) : (
+                <Tooltip title="Filter list">
+                    <IconButton>
+                        <FilterListIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
+            {numSelected == 1 ? (
+                <><Tooltip title="Delete">
+                    <IconButton>
+                        <AutoFixHighIcon onClick={handleOpen} />
+                    </IconButton>
+                </Tooltip>
+                    <div>
+                        <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2">
+                                    Update the leads
+                                </Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                        <TextField id="standard-basic" size='small' label="Nom" variant="outlined" name="nom" placeholder={selected[0].nom} onChange={onInputchange} /><br />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField id="standard-basic" size='small' label="Mail" variant="outlined" name="mail" onChange={onInputchange} placeholder={selected[0].mail} /><br />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField id="standard-basic" size='small' label="Telephone" variant="outlined" name="phone" onChange={onInputchange} placeholder={selected[0].phone} /><br />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField id="standard-basic" size='small' label="Lieu" variant="outlined" name="lieu" onChange={onInputchange} placeholder={selected[0].lieu} /><br />
+                                    </Grid>
+                                </Grid>
+                                <Button variant="contained" onClick={updateClients}>Save</Button>
+                            </Box>
+                        </Modal>
+                    </div></>
             ) : (
                 <Tooltip title="Filter list">
                     <IconButton>
@@ -278,7 +398,7 @@ export default function EnhancedTable(props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} refetch={props.refetch} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
