@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import logo from './logo.svg';
 import TableComponentsClients from './Components/tableClients';
 import TableComponentsLeads from './Components/tableLeads';
+
+import TableComponentsPaque from './Components/tablePaque';
 import './App.css';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
@@ -27,6 +29,8 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([{ pk: "test1", sk: "test1" }]);
   const [value, setValue] = React.useState('Controlled');
+  
+  const [rowsPaque, setRowsPaque] = useState([{ pk: "test1", sk: "test1" }]);
   const [rowsClients, setRowsClients] = useState([{ pk: "test1", sk: "test1" }]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -72,6 +76,24 @@ export default function App() {
     }
     fetchDataClients();
   }, [setRowsClients]);
+  useEffect(() => {
+    async function fetchDataPaque() {
+      const paque = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
+      {
+        "operation": "list",
+        "tableName": "paque",
+        "payload": {
+          "Item": {
+            "pk": "1234ABCD",
+            "sk": "1234ABCD"
+          }
+        }
+      })
+      console.log(paque.data)
+      setRowsPaque(paque.data.Items)
+    }
+    fetchDataPaque();
+  }, [setRowsPaque]);
 
   const [nom, setNom] = React.useState('');
   const [prenom, setPrenom] = React.useState('');
@@ -158,6 +180,22 @@ export default function App() {
     })
     
     setRowsClients(clients.data.Items)
+  }
+
+  const refetchPaque = async () => {
+    const paque = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
+    {
+      "operation": "list",
+      "tableName": "paque",
+      "payload": {
+        "Item": {
+          "pk": "1234ABCD",
+          "sk": "1234ABCD"
+        }
+      }
+    })
+    
+    setRowsPaque(paque.data.Items)
   }
 
   const saveLeads = async () => {
@@ -272,6 +310,7 @@ export default function App() {
         </Box>
       </Modal>
       <TableComponentsClients rows={rowsClients} refetch={refetchClients}/>
+      <TableComponentsPaque rows={rowsPaque} refetch={refetchPaque}/>
     </div>
   );
 }
