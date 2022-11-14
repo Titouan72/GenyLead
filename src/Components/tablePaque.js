@@ -309,7 +309,8 @@ export default function EnhancedTable(props) {
     const [dense, setDense] = React.useState(true);
     const [rows, setRows] = React.useState(props.rows);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    
+    console.log(typeof(props.rows));
+    console.log(props.rows[0].client);
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -389,7 +390,7 @@ export default function EnhancedTable(props) {
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row);
                                     const labelId = `enhanced-table-checkbox-${index}`;
-
+                                    console.log(row.client.nom)
                                     return (
                                         <TableRow
                                             hover
@@ -410,8 +411,8 @@ export default function EnhancedTable(props) {
                                                 />
                                             </TableCell>
                                             
+                                            <TableCell align="left">{row.client.nom}</TableCell>
                                             <TableCell align="left">{row.nom}</TableCell>
-                                             <TableCell align="left">{row.client.pk}</TableCell> 
                                             <TableCell align="left">{row.prix}</TableCell>
                                         </TableRow>
                                     );
