@@ -176,7 +176,7 @@ const EnhancedTableToolbar = (props) => {
                     }
                 })
         }
-
+        props.refetch()
 
     }
 

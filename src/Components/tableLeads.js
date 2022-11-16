@@ -225,7 +225,7 @@ const EnhancedTableToolbar = (props) => {
                     }
                 })
         }
-
+        props.refetch()
     }
     const updateLeads = async () => {
         for (let i = 0; i < selected.length; i++) {
@@ -330,8 +330,6 @@ const EnhancedTableToolbar = (props) => {
         setRowsClients(clients.data.Items)
     }
 
-
-
     const makeAPack = async () => {
         await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
             {
@@ -344,7 +342,8 @@ const EnhancedTableToolbar = (props) => {
                         'nom': nom,
                         'prix': prix,
                         'client': clientSelected,
-                        'leadsListe': selected
+                        'leadsListe': selected,
+                        'clientNom': clientSelected.nom,
                     }
                 }
             })

@@ -20,6 +20,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import InfoIcon from '@mui/icons-material/Info';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -36,7 +46,7 @@ function getComparator(order, orderBy) {
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
- 
+
 function stableSort(array, comparator) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -73,6 +83,7 @@ const headCells = [
 function EnhancedTableHead(props) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
         props;
+
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -129,26 +140,39 @@ EnhancedTableHead.propTypes = {
 const EnhancedTableToolbar = (props) => {
     const { numSelected } = props;
     const { selected } = props;
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 24,
+        p: 4,
+    };
 
     const deletePaque = async () => {
         for (let i = 0; i < selected.length; i++) {
-            console.log('delete', selected)
+
             const element = selected[i];
-            console.log('delete', element.pk)
-            console.log('delete', element.sk)
+            console.log('pk ', element.pk)
+            console.log('sk ', element.sk)
             await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
                 {
                     "operation": "delete",
                     "tableName": "paque",
                     "payload": {
                         "Key": {
-                            "pk": element.pk,
-                            "sk": element.sk
+                            "pk": element.pk
                         }
                     }
                 })
         }
-
+        props.refetch()
     }
 
     return (
@@ -195,6 +219,50 @@ const EnhancedTableToolbar = (props) => {
                     </IconButton>
                 </Tooltip>
             )}
+            {numSelected === 1 ? (
+                <>
+                <Tooltip title="Details">
+                    <IconButton>
+                        <InfoIcon onClick={handleOpen} />
+                    </IconButton>
+                </Tooltip>
+                
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Detail du paque
+                        </Typography>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <p >Nom : {selected[0].nom}</p> 
+                            </Grid>
+                            <Grid item xs={6}>
+                                <p >Phone : {selected[0].client.phone}</p> 
+                            </Grid>
+                            <Grid item xs={6}>
+                                <p >Mail : {selected[0].client.mail}</p> 
+                            </Grid>
+                            <Grid item xs={6}>
+                                <p >Lieu : {selected[0].client.lieu}</p> 
+                            </Grid>
+                        </Grid>
+                        <Button variant="contained" onClick={handleClose}>Close</Button>
+                    </Box>
+                </Modal>
+                </>
+
+            ) : (
+                <Tooltip title="Filter list">
+                    <IconButton>
+                        <FilterListIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
         </Toolbar>
     );
 };
@@ -210,7 +278,7 @@ export default function EnhancedTable(props) {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(true);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    console.log(typeof(props.rows));
+    console.log(typeof (props.rows));
     console.log(props.rows[0].client);
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -263,7 +331,7 @@ export default function EnhancedTable(props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} selected={selected} refetch={props.refetch}/>
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} refetch={props.refetch} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -305,10 +373,10 @@ export default function EnhancedTable(props) {
                                                     }}
                                                 />
                                             </TableCell>
-                                            
-                                            {/* <TableCell align="left">{row.client.nom}</TableCell> */}
-                                            <TableCell align="left">{row.nom}</TableCell>
+
+                                            <TableCell align="left">{row.clientNom}</TableCell>
                                             <TableCell align="left">{row.prix}</TableCell>
+                                            <TableCell align="left">{row.leadsListe.length}</TableCell>
                                         </TableRow>
                                     );
                                 })}
