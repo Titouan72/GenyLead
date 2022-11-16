@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import logo from './logo.svg';
 import TableComponentsClients from './Components/tableClients';
 import TableComponentsLeads from './Components/tableLeads';
-
 import TableComponentsPaque from './Components/tablePaque';
 import './App.css';
-import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -26,19 +24,24 @@ export default function App() {
     p: 4,
     borderRadius: 2
   };
+  const styleButton = {
+    color: 'black'
+  }
+  const styleParentDiv = {
+    paddingRight: '15%', 
+    paddingLeft: '15%', 
+    paddingTop: '20px'
+  }
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([{ pk: "test1", sk: "test1" }]);
-  const [value, setValue] = React.useState('Controlled');
-  
   const [rowsPaque, setRowsPaque] = useState([{ pk: "test1", sk: "test1" }]);
   const [rowsClients, setRowsClients] = useState([{ pk: "test1", sk: "test1" }]);
+  const [open2, setOpen2] = React.useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [open2, setOpen2] = React.useState(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
-
-
 
   useEffect(() => {
     async function fetchData() {
@@ -53,11 +56,11 @@ export default function App() {
           }
         }
       })
-      console.log(persons.data)
       setRows(persons.data.Items)
     }
     fetchData();
   }, [setRows]);
+
   useEffect(() => {
     async function fetchDataClients() {
       const clients = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
@@ -71,11 +74,11 @@ export default function App() {
           }
         }
       })
-      console.log(clients.data)
       setRowsClients(clients.data.Items)
     }
     fetchDataClients();
   }, [setRowsClients]);
+
   useEffect(() => {
     async function fetchDataPaque() {
       const paque = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
@@ -89,12 +92,12 @@ export default function App() {
           }
         }
       })
-      console.log(paque.data)
       setRowsPaque(paque.data.Items)
     }
     fetchDataPaque();
   }, [setRowsPaque]);
 
+  ///////// STATE FORM /////////
   const [nom, setNom] = React.useState('');
   const [prenom, setPrenom] = React.useState('');
   const [mail, setMail] = React.useState('');
@@ -110,47 +113,47 @@ export default function App() {
   const [lieuC, setLieuC] = React.useState('');
 
   const onInputchange = (event) => {
-    console.log(event.target.name)
-    if (event.target.name == 'nom') {
+    if (event.target.name === 'nom') {
       setNom(event.target.value);
     }
-    if (event.target.name == 'prenom') {
+    if (event.target.name === 'prenom') {
       setPrenom(event.target.value);
     }
-    if (event.target.name == 'mail') {
+    if (event.target.name === 'mail') {
       setMail(event.target.value);
     }
-    if (event.target.name == 'phone') {
+    if (event.target.name === 'phone') {
       setPhone(event.target.value);
     }
-    if (event.target.name == 'lieu') {
+    if (event.target.name === 'lieu') {
       setLieu(event.target.value);
     }
-    if (event.target.name == 'prix') {
+    if (event.target.name === 'prix') {
       setPrix(event.target.value);
     }
-    if (event.target.name == 'envie') {
+    if (event.target.name === 'envie') {
       setEnvie(event.target.value);
     }
-    if (event.target.name == 'precision') {
+    if (event.target.name === 'precision') {
       setPrecision(event.target.value);
     }
-    if (event.target.name == 'couleur') {
+    if (event.target.name === 'couleur') {
       setCouleur(event.target.value);
     }
-    if (event.target.name == 'nomC') {
+    if (event.target.name === 'nomC') {
       setNomC(event.target.value);
     }
-    if (event.target.name == 'mailC') {
+    if (event.target.name === 'mailC') {
       setMailC(event.target.value);
     }
-    if (event.target.name == 'phoneC') {
+    if (event.target.name === 'phoneC') {
       setPhoneC(event.target.value);
     }
-    if (event.target.name == 'lieuC') {
+    if (event.target.name === 'lieuC') {
       setLieuC(event.target.value);
     }
   }
+
   const refetchLeads = async () => {
     const leads = await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
     {
@@ -178,7 +181,6 @@ export default function App() {
         }
       }
     })
-    
     setRowsClients(clients.data.Items)
   }
 
@@ -194,7 +196,6 @@ export default function App() {
         }
       }
     })
-    
     setRowsPaque(paque.data.Items)
   }
 
@@ -223,6 +224,7 @@ export default function App() {
     refetchLeads()
     setOpen(false)
   }
+
   const saveClients = async () => {
     await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`, 
     {
@@ -242,11 +244,10 @@ export default function App() {
     refetchClients()
     setOpen2(false)
   }
-  console.log('erwerwerwerr', rows)
-  console.log('erwerwerwerr', rowsClients)
+
   return (
-    <div className="App" style={{ paddingRight: '15%', paddingLeft: '15%', paddingTop: '20px'}}>
-      <Button onClick={handleOpen} style={{ color: 'black' }}>Insert a lead</Button>
+    <div className="App" style={styleParentDiv}>
+      <Button onClick={handleOpen} style={styleButton}>Creer un lead:</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -255,7 +256,7 @@ export default function App() {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Insert a lead:
+            Creer un lead:
           </Typography><br />
           <Grid container spacing={2}>
             <Grid item xs={6}>

@@ -16,8 +16,6 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
@@ -144,13 +142,11 @@ EnhancedTableHead.propTypes = {
 const EnhancedTableToolbar = (props) => {
     const { numSelected } = props;
     const { selected } = props;
-    const [val, setVal] = React.useState(props.selected[0]);
     const [nom, setNom] = React.useState();
     const [mail, setMail] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [lieu, setLieu] = React.useState('');
     const [open, setOpen] = React.useState(false);
-    const [sel, setSel] = React.useState(selected[0]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -167,10 +163,7 @@ const EnhancedTableToolbar = (props) => {
     };
     const deleteClients = async () => {
         for (let i = 0; i < selected.length; i++) {
-            console.log('delete', selected)
             const element = selected[i];
-            console.log('delete', element.pk)
-            console.log('delete', element.sk)
             await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
                 {
                     "operation": "delete",
@@ -189,7 +182,6 @@ const EnhancedTableToolbar = (props) => {
 
     const updateClients = async () => {
         for (let i = 0; i < selected.length; i++) {
-            console.log('update', selected)
             const element = selected[i];
             await axios.post(`https://ccfzqdt1k6.execute-api.eu-west-1.amazonaws.com/Prod/dynamodbmanager`,
                 {
@@ -222,18 +214,16 @@ const EnhancedTableToolbar = (props) => {
     }
 
     const onInputchange = (event) => {
-        console.log(event.target.name)
-        if (event.target.name == 'nom') {
-            console.log('code', event.target.value)
+        if (event.target.name === 'nom') {
             setNom(event.target.value);
         }
-        if (event.target.name == 'mail') {
+        if (event.target.name === 'mail') {
             setMail(event.target.value);
         }
-        if (event.target.name == 'phone') {
+        if (event.target.name === 'phone') {
             setPhone(event.target.value);
         }
-        if (event.target.name == 'lieu') {
+        if (event.target.name === 'lieu') {
             setLieu(event.target.value);
         }
     }
@@ -282,7 +272,7 @@ const EnhancedTableToolbar = (props) => {
                     </IconButton>
                 </Tooltip>
             )}
-            {numSelected == 1 ? (
+            {numSelected === 1 ? (
                 <><Tooltip title="Delete">
                     <IconButton>
                         <AutoFixHighIcon onClick={handleOpen} />
@@ -338,9 +328,7 @@ export default function EnhancedTable(props) {
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(true);
-    const [rows, setRows] = React.useState(props.rows);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    console.log(props.rows)
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -372,7 +360,6 @@ export default function EnhancedTable(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-        console.log('test', newSelected)
         setSelected(newSelected);
     };
 
@@ -383,10 +370,6 @@ export default function EnhancedTable(props) {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-    };
-
-    const handleChangeDense = (event) => {
-        setDense(event.target.checked);
     };
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -470,10 +453,6 @@ export default function EnhancedTable(props) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            {/*             <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Dense padding"
-            /> */}
         </Box>
     );
 }
