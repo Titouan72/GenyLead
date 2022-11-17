@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import TableComponentsClients from './Components/tableClients';
 import TableComponentsLeads from './Components/tableLeads';
 import TableComponentsPaque from './Components/tablePaque';
+import ImportFile from './Components/importFile';
 import './App.css';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -247,6 +248,7 @@ export default function App() {
 
   return (
     <div className="App" style={styleParentDiv}>
+      <ImportFile />
       <Button onClick={handleOpen} style={styleButton}>Creer un lead:</Button>
       <Modal
         open={open}

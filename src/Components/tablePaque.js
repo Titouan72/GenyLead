@@ -221,39 +221,45 @@ const EnhancedTableToolbar = (props) => {
             )}
             {numSelected === 1 ? (
                 <>
-                <Tooltip title="Details">
-                    <IconButton>
-                        <InfoIcon onClick={handleOpen} />
-                    </IconButton>
-                </Tooltip>
-                
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Detail du paque
-                        </Typography>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <p >Nom : {selected[0].nom}</p> 
+                    <Tooltip title="Details">
+                        <IconButton>
+                            <InfoIcon onClick={handleOpen} />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                Detail du paque : {selected[0].nom}
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <p >Nom : {selected[0].client.nom}</p>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <p >Phone : {selected[0].client.phone}</p>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <p >Mail : {selected[0].client.mail}</p>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <p >Lieu : {selected[0].client.lieu}</p>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <p >Cree par : {selected[0].sk}</p>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <p >Prix : {selected[0].prix}</p>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6}>
-                                <p >Phone : {selected[0].client.phone}</p> 
-                            </Grid>
-                            <Grid item xs={6}>
-                                <p >Mail : {selected[0].client.mail}</p> 
-                            </Grid>
-                            <Grid item xs={6}>
-                                <p >Lieu : {selected[0].client.lieu}</p> 
-                            </Grid>
-                        </Grid>
-                        <Button variant="contained" onClick={handleClose}>Close</Button>
-                    </Box>
-                </Modal>
+                            <Button variant="contained" onClick={handleClose}>Close</Button>
+                        </Box>
+                    </Modal>
                 </>
 
             ) : (
@@ -376,7 +382,9 @@ export default function EnhancedTable(props) {
 
                                             <TableCell align="left">{row.clientNom}</TableCell>
                                             <TableCell align="left">{row.prix}</TableCell>
-                                            <TableCell align="left">{row.leadsListe.length}</TableCell>
+                                            {row.leadsListe != undefined &&
+                                                <TableCell align="left">{row.leadsListe.length}</TableCell>
+                                            }
                                         </TableRow>
                                     );
                                 })}
