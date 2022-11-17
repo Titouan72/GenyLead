@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 
 
 export default function ImportFile() {
+    
 
     const readUploadFile = (e) => {
         e.preventDefault();
@@ -17,6 +18,7 @@ export default function ImportFile() {
                 console.log(json);
             };
             reader.readAsArrayBuffer(e.target.files[0]);
+            console.log(e.target.files[0])
         }
     }
     

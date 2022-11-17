@@ -30,6 +30,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -196,13 +197,8 @@ const EnhancedTableToolbar = (props) => {
                     {numSelected} selected
                 </Typography>
             ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                </Typography>
+                <></>
+
             )}
 
             {numSelected > 0 ? (
@@ -213,11 +209,7 @@ const EnhancedTableToolbar = (props) => {
                 </Tooltip>
 
             ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
+                <></>
             )}
             {numSelected === 1 ? (
                 <>
@@ -263,11 +255,7 @@ const EnhancedTableToolbar = (props) => {
                 </>
 
             ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
+                <></>
             )}
         </Toolbar>
     );
